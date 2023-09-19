@@ -4,7 +4,7 @@ import time
 
 start_flag = [False] * 5
 reset_flag = [False] * 5
-flash_time = [3] * 5
+flash_time = [10] * 5
 exit_flag = False
 
 #タイマー
@@ -14,17 +14,14 @@ def timer(pos):
     count = flash_time[pos]
 
     while not exit_flag:
-        s_flag = start_flag[pos]
-        r_flag = reset_flag[pos]
-        if r_flag:
+        if reset_flag[pos]:
             count = flash_time[pos]
-            labels.config(text = count)
-            s_flag = False
+            s_buttons[pos].config(text = count)
             reset_flag[pos] = False
             start_flag[pos] = False
-        if s_flag:
+        if start_flag[pos]:
             count -= 1
-            labels.config(text = count)
+            s_buttons[pos].config(text = count)
             if count <= 0:
                 start_flag[pos] = False
                 count = flash_time[pos]
@@ -58,28 +55,18 @@ def exit_root():
     root.destroy()
 
 root = tkinter.Tk()
-root.geometry("200x200")
+root.geometry("300x600")
 
-#TOP用スタートボタン
-s_button_1 = tkinter.Button(
-    root,
-    text = "Flash_TOP"
-)
-s_button_1.pack()
+img = tkinter.PhotoImage(file='./spell_image/flash.png')
 
-#TOP用時間表示ラベル
-labels = tkinter.Label(
-    root,
-    text = 0,
-)
-labels.pack()
-
-#JG用スタートボタン
-s_button_2 = tkinter.Button(
-    root,
-    text = "Flash_JG"
-)
-s_button_2.pack()
+s_buttons = [tkinter.Button(root, text=0, image=img, font=('MS UI Gothic', 30), fg='black', compound='center') for num in range(5)]
+[s_buttons[i].pack() for i in range(len(s_buttons))]
+#lambda関数でボタンクリック関数へ変数を渡せる
+s_buttons[0].bind("<ButtonPress>", lambda event : s_button_clk(event, 0))
+s_buttons[1].bind("<ButtonPress>", lambda event : s_button_clk(event, 1))
+s_buttons[2].bind("<ButtonPress>", lambda event : s_button_clk(event, 2))
+s_buttons[3].bind("<ButtonPress>", lambda event : s_button_clk(event, 3))
+s_buttons[4].bind("<ButtonPress>", lambda event : s_button_clk(event, 4))
 
 #リセット用ボタン(現在TOPのみ利用可能)
 r_button = tkinter.Button(
@@ -88,19 +75,24 @@ r_button = tkinter.Button(
 )
 r_button.pack()
 
-#lambda関数でボタンクリック関数へ変数を渡せる
-s_button_1.bind("<ButtonPress>", lambda event : s_button_clk(event, 0))
-s_button_2.bind("<ButtonPress>", lambda event : s_button_clk(event, 1))
+#s_button_1.bind("<ButtonPress>", lambda event : s_button_clk(event, 0))
+#s_button_2.bind("<ButtonPress>", lambda event : s_button_clk(event, 1))
 r_button.bind("<ButtonPress>", lambda event : r_button_clk(event, 0))
 root.protocol("WM_DELETE_WINDOW", exit_root)
 
 #並行してタイマーを使用するためスレッドをtimerに関して作る、ポジションがわかるように引数を渡す
 thread_1 = threading.Thread(target=timer, args = (0,))
 thread_2 = threading.Thread(target=timer, args = (1,))
+thread_3 = threading.Thread(target=timer, args = (2,))
+thread_4 = threading.Thread(target=timer, args = (3,))
+thread_5 = threading.Thread(target=timer, args = (4,))
 
 #スレッド起動
 thread_1.start()
 thread_2.start()
+thread_3.start()
+thread_4.start()
+thread_5.start()
 
 #メインループ
 root.mainloop()
