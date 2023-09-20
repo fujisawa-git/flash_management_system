@@ -16,7 +16,7 @@ def timer(pos):
     while not exit_flag:
         if reset_flag[pos]:
             count = flash_time[pos]
-            s_buttons[pos].config(text = count)
+            s_buttons[pos].config(text = "")
             reset_flag[pos] = False
             start_flag[pos] = False
         if start_flag[pos]:
@@ -25,6 +25,7 @@ def timer(pos):
             if count <= 0:
                 start_flag[pos] = False
                 count = flash_time[pos]
+                s_buttons[pos].config(text = "")
 
             time.sleep(1)
 
@@ -55,12 +56,14 @@ def exit_root():
     root.destroy()
 
 root = tkinter.Tk()
-root.geometry("300x600")
+root.geometry("200x360")
 
 img = tkinter.PhotoImage(file='./spell_image/flash.png')
 
-s_buttons = [tkinter.Button(root, text=0, image=img, font=('MS UI Gothic', 30), fg='black', compound='center') for num in range(5)]
-[s_buttons[i].pack() for i in range(len(s_buttons))]
+#スタートボタンの設定
+s_buttons = [tkinter.Button(root, image=img, font=('MS UI Gothic', 30, "bold"), fg='black', compound='center') for num in range(5)]
+[s_buttons[i].grid(row=i, column=0) for i in range(len(s_buttons))]
+
 #lambda関数でボタンクリック関数へ変数を渡せる
 s_buttons[0].bind("<ButtonPress>", lambda event : s_button_clk(event, 0))
 s_buttons[1].bind("<ButtonPress>", lambda event : s_button_clk(event, 1))
@@ -68,16 +71,16 @@ s_buttons[2].bind("<ButtonPress>", lambda event : s_button_clk(event, 2))
 s_buttons[3].bind("<ButtonPress>", lambda event : s_button_clk(event, 3))
 s_buttons[4].bind("<ButtonPress>", lambda event : s_button_clk(event, 4))
 
-#リセット用ボタン(現在TOPのみ利用可能)
-r_button = tkinter.Button(
-    root,
-    text="reset",
-)
-r_button.pack()
+#リセットボタンの設定
+r_buttons = [tkinter.Button(root, text="reset", font=('MS UI Gothic', 30, "normal"), fg='black', compound='center') for num in range(5)]
+[r_buttons[i].grid(row=i, column=1) for i in range(len(r_buttons))]
 
-#s_button_1.bind("<ButtonPress>", lambda event : s_button_clk(event, 0))
-#s_button_2.bind("<ButtonPress>", lambda event : s_button_clk(event, 1))
-r_button.bind("<ButtonPress>", lambda event : r_button_clk(event, 0))
+r_buttons[0].bind("<ButtonPress>", lambda event : r_button_clk(event, 0))
+r_buttons[1].bind("<ButtonPress>", lambda event : r_button_clk(event, 1))
+r_buttons[2].bind("<ButtonPress>", lambda event : r_button_clk(event, 2))
+r_buttons[3].bind("<ButtonPress>", lambda event : r_button_clk(event, 3))
+r_buttons[4].bind("<ButtonPress>", lambda event : r_button_clk(event, 4))
+
 root.protocol("WM_DELETE_WINDOW", exit_root)
 
 #並行してタイマーを使用するためスレッドをtimerに関して作る、ポジションがわかるように引数を渡す
