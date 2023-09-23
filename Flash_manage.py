@@ -4,7 +4,7 @@ import time
 
 start_flag = [False] * 5
 reset_flag = [False] * 5
-flash_time = [10] * 5
+flash_time = [300] * 5
 exit_flag = False
 
 #タイマー
@@ -19,6 +19,7 @@ def timer(pos):
             s_buttons[pos].config(text = "")
             reset_flag[pos] = False
             start_flag[pos] = False
+            s_buttons[pos].configure(image=img)
         if start_flag[pos]:
             count -= 1
             s_buttons[pos].config(text = count)
@@ -26,6 +27,7 @@ def timer(pos):
                 start_flag[pos] = False
                 count = flash_time[pos]
                 s_buttons[pos].config(text = "")
+                s_buttons[pos].configure(image=img)
 
             time.sleep(1)
 
@@ -34,6 +36,7 @@ def s_button_clk(event, pos):
     global start_flag
 
     start_flag[pos] = True
+    s_buttons[pos].configure(image=img_click)
 
 #タイマーリセットボタンが押されたときのイベント
 def r_button_clk(event, pos):
@@ -47,11 +50,17 @@ def exit_root():
     global root 
     global thread_1
     global thread_2
+    global thread_3
+    global thread_4
+    global thread_5
 
     exit_flag = True
 
     thread_1.join()
     thread_2.join()
+    thread_3.join()
+    thread_4.join()
+    thread_5.join()
 
     root.destroy()
 
@@ -59,6 +68,7 @@ root = tkinter.Tk()
 root.geometry("200x360")
 
 img = tkinter.PhotoImage(file='./spell_image/flash.png')
+img_click = tkinter.PhotoImage(file='./spell_image/flash_click.png')
 
 #スタートボタンの設定
 s_buttons = [tkinter.Button(root, image=img, font=('MS UI Gothic', 30, "bold"), fg='black', compound='center') for num in range(5)]
